@@ -1,0 +1,20 @@
+version: "2"
+
+volumes:
+  mock-sync:
+    external: true
+  gem_store_235:
+    external: true
+
+services:
+  web:
+    build:
+      context: .
+    command: bash
+    #env_file: .env
+    tty: true
+    stdin_open: true
+    volumes:
+      - gem_store_235:/gems
+      - .:/app
+      - mock-sync:/app:nocopy

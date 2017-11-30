@@ -1,0 +1,23 @@
+before_script:
+  - echo d883b865d01c2d930c149cce57d8632c > /etc/machine-id
+  - bundle install --jobs $(nproc) --path=/cache/bundler
+# divide into tasks so they can run in paralel
+rubocop:
+  script:
+    - bundle exec rubocop
+  stage: build
+rspec:
+  script:
+    - cp config/blender.yml.example config/blender.yml
+    - COVERAGE=true bundle exec rspec
+  stage: test
+  except:
+    - /^deploy--.*$/
+deploy:
+  script:
+    - bundle exec rake build
+    - gem install geminabox
+    - gem inabox pkg/* -g http://deploy:AiGhah7A@gems.uol
+  stage: deploy
+  only:
+    - master
